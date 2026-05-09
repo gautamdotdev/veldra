@@ -31,13 +31,26 @@ function WishlistPage() {
     <div className="max-w-[1400px] mx-auto px-6 lg:px-10 pt-10 pb-20">
       <h1 className="font-serif text-4xl">Wishlist</h1>
       <p className="text-sm text-muted-foreground mt-2">{items.length} saved pieces</p>
-      <div className="mt-10 grid grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-10">
+      <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-10 lg:gap-10">
         {items.map((p) => (
-          <div key={p.id}>
+          <div key={p.id} className="animate-in fade-in slide-in-from-bottom-4 duration-700">
             <ProductCard product={p} />
-            <div className="flex gap-2 mt-3">
-              <button onClick={() => { add({ productId: p.id, slug: p.slug, name: p.name, image: p.images[0], price: p.salePrice ?? p.price, size: p.sizes[Math.floor(p.sizes.length / 2)], color: p.colors[0].name, qty: 1 }); push({ type: "success", message: "Moved to cart" }); }} className="flex-1 bg-foreground text-background text-xs label-caps py-2 rounded-md hover:bg-gold transition-colors">Move to Cart</button>
-              <button onClick={() => remove(p.id)} className="border border-border text-xs label-caps px-3 rounded-md hover:border-destructive hover:text-destructive">Remove</button>
+            <div className="flex flex-col sm:flex-row gap-2 mt-4">
+              <button 
+                onClick={() => { 
+                  add({ productId: p.id, slug: p.slug, name: p.name, image: p.images[0], price: p.salePrice ?? p.price, size: p.sizes[Math.floor(p.sizes.length / 2)], color: p.colors[0].name, qty: 1 }); 
+                  push({ type: "success", message: "Moved to cart" }); 
+                }} 
+                className="flex-[2] bg-foreground text-background text-[10px] label-caps py-3 rounded-lg hover:bg-gold transition-all duration-300 hover:shadow-lg active:scale-95"
+              >
+                Move to Cart
+              </button>
+              <button 
+                onClick={() => remove(p.id)} 
+                className="flex-1 border border-border text-[10px] label-caps py-3 rounded-lg hover:bg-destructive/5 hover:text-destructive hover:border-destructive transition-all duration-300 active:scale-95 text-muted-foreground"
+              >
+                Remove
+              </button>
             </div>
           </div>
         ))}

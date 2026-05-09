@@ -1,4 +1,5 @@
 import { Link } from "@tanstack/react-router";
+import { WHATSAPP_NUMBER } from "@/lib/products";
 import { Instagram, MessageCircle, Facebook } from "lucide-react";
 import { useToasts } from "@/lib/store";
 import { useState } from "react";
@@ -37,7 +38,7 @@ export function Footer() {
             <p className="label-caps mb-4 text-gold">Connect</p>
             <div className="flex gap-3">
               <a href="#" className="w-9 h-9 border border-white/20 rounded-full flex items-center justify-center hover:border-gold transition-colors"><Instagram size={15} /></a>
-              <a href={`https://wa.me/919876543210`} target="_blank" rel="noreferrer" className="w-9 h-9 border border-white/20 rounded-full flex items-center justify-center hover:border-gold transition-colors"><MessageCircle size={15} /></a>
+              <a href={`https://wa.me/${WHATSAPP_NUMBER}`} target="_blank" rel="noreferrer" className="w-9 h-9 border border-white/20 rounded-full flex items-center justify-center hover:border-gold transition-colors"><MessageCircle size={15} /></a>
               <a href="#" className="w-9 h-9 border border-white/20 rounded-full flex items-center justify-center hover:border-gold transition-colors"><Facebook size={15} /></a>
             </div>
           </div>

@@ -159,16 +159,17 @@ export const HERO_IMAGE = "https://images.unsplash.com/photo-1617127365659-c47fa
 export const EDITORIAL_IMAGE = "https://images.unsplash.com/photo-1609505848912-b7c3b9c99049?w=1200&q=85&auto=format&fit=crop";
 export const STORY_IMAGE = "https://images.unsplash.com/photo-1552374196-c4e7ffc6e126?w=1200&q=85&auto=format&fit=crop";
 
-export const WHATSAPP_NUMBER = "919876543210";
+export const WHATSAPP_NUMBER = "918780142005";
+export const CONTACT_NAME = "Zala Bhavyarajsinh";
 
 export function whatsappProductUrl(p: Product, size: string, color: string, qty: number) {
   const price = (p.salePrice ?? p.price) * qty;
-  const text = `Hi, I'm interested in *${p.name}*\nSize: ${size} | Color: ${color} | Qty: ${qty}\nPrice: ₹${price.toLocaleString("en-IN")}\nCould you confirm availability and delivery?`;
+  const text = `Hi ${CONTACT_NAME}, I'm interested in *${p.name}*\nSize: ${size} | Color: ${color} | Qty: ${qty}\nPrice: ₹${price.toLocaleString("en-IN")}\nCould you confirm availability and delivery?`;
   return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(text)}`;
 }
 
 export function whatsappCartUrl(items: { name: string; size: string; color: string; qty: number; price: number }[], total: number) {
   const lines = items.map((i, n) => `${n + 1}. ${i.name} (Size ${i.size}, ${i.color}) — ₹${i.price.toLocaleString("en-IN")} x${i.qty}`).join("\n");
-  const text = `Hi, I'd like to order the following:\n${lines}\nTotal: ₹${total.toLocaleString("en-IN")}\nPlease confirm availability.`;
+  const text = `Hi ${CONTACT_NAME}, I'd like to order the following:\n${lines}\nTotal: ₹${total.toLocaleString("en-IN")}\nPlease confirm availability.`;
   return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(text)}`;
 }

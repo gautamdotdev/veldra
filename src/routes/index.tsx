@@ -37,7 +37,7 @@ function Index() {
             Curated menswear for the discerning gentleman. Timeless over trendy — pieces made to live with you, not the season.
           </p>
           <div className="mt-10">
-            <Link to="/collections/$category" params={{ category: "shirts" }} className="group inline-flex items-center gap-3 bg-foreground text-background px-8 py-4 rounded-full text-sm hover:bg-gold transition-colors">
+            <Link to="/collections" className="group inline-flex items-center gap-3 bg-foreground text-background px-8 py-4 rounded-full text-sm hover:bg-gold transition-colors">
               Explore Collection <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
             </Link>
           </div>

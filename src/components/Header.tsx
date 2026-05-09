@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "@tanstack/react-router";
+import { Link, useNavigate, useRouter } from "@tanstack/react-router";
 import { Search, Sun, Moon, ShoppingBag, Heart, Menu, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useCart, useTheme, useWishlist } from "@/lib/store";
@@ -6,7 +6,7 @@ import { products } from "@/lib/products";
 
 const navLinks = [
   { to: "/", label: "Home" },
-  { to: "/collections/t-shirts", label: "Collections" },
+  { to: "/collections", label: "Collections" },
   { to: "/new-arrivals", label: "New Arrivals" },
   { to: "/about", label: "About" },
   { to: "/contact", label: "Contact" },
@@ -21,10 +21,20 @@ export function Header() {
   const [searchOpen, setSearchOpen] = useState(false);
   const [query, setQuery] = useState("");
   const navigate = useNavigate();
+  const router = useRouter();
 
   useEffect(() => { init(); }, [init]);
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 20);
+    if (mobileOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => { document.body.style.overflow = ""; };
+  }, [mobileOpen]);
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 10);
     window.addEventListener("scroll", onScroll);
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
@@ -34,80 +44,132 @@ export function Header() {
     : [];
 
   return (
-    <header className={`sticky top-0 z-50 transition-all ${scrolled ? "bg-background/80 backdrop-blur-md border-b border-border" : "bg-background"}`}>
-      <div className="max-w-[1400px] mx-auto px-6 lg:px-10 h-20 flex items-center justify-between">
-        <button className="lg:hidden" onClick={() => setMobileOpen(true)} aria-label="Menu"><Menu size={22} /></button>
-        <Link to="/" className="font-serif text-2xl tracking-tight flex items-baseline">
+    <header className="sticky top-0 z-50 w-full h-16 transition-all duration-300">
+      {/* Dynamic Background Layer */}
+      <div className={`absolute inset-0 -z-10 transition-all duration-500 ${
+        mobileOpen 
+          ? "bg-background" 
+          : (scrolled ? "bg-background/90 backdrop-blur-xl border-b border-border shadow-sm" : "bg-background")
+      }`} />
+
+      <div className="max-w-[1400px] mx-auto px-6 lg:px-10 h-full flex items-center justify-between relative">
+        <Link to="/" className="font-serif text-xl sm:text-2xl tracking-tight flex items-baseline z-50">
           VELDRA<span className="text-gold ml-0.5">.</span>
         </Link>
-        <nav className="hidden lg:flex items-center gap-9">
+
+        <div className="hidden lg:flex items-center gap-10 ml-auto mr-12">
           {navLinks.map((l) => (
-            <Link key={l.to} to={l.to} className="nav-link text-foreground/80 hover:text-foreground transition-colors" activeProps={{ className: "nav-link text-foreground" }}>
+            <Link key={l.to} to={l.to} className="nav-link text-[11px] text-foreground/60 hover:text-foreground transition-all hover:tracking-widest duration-500" activeProps={{ className: "nav-link text-foreground font-semibold" }}>
               {l.label}
             </Link>
           ))}
-        </nav>
-        <div className="flex items-center gap-1 sm:gap-3">
-          <button onClick={() => setSearchOpen((s) => !s)} aria-label="Search" className="p-2 hover:text-gold transition-colors"><Search size={18} /></button>
-          <button onClick={toggle} aria-label="Theme" className="p-2 hover:text-gold transition-colors">{theme === "light" ? <Moon size={18} /> : <Sun size={18} />}</button>
-          <Link to="/wishlist" aria-label="Wishlist" className="p-2 hover:text-gold transition-colors relative">
-            <Heart size={18} />
-            {wishCount > 0 && <span className="absolute -top-0.5 -right-0.5 bg-gold text-[10px] text-background w-4 h-4 rounded-full flex items-center justify-center font-medium">{wishCount}</span>}
-          </Link>
-          <Link to="/cart" aria-label="Cart" className="p-2 hover:text-gold transition-colors relative">
-            <ShoppingBag size={18} />
-            {cartCount > 0 && <span className="absolute -top-0.5 -right-0.5 bg-gold text-[10px] text-background w-4 h-4 rounded-full flex items-center justify-center font-medium">{cartCount}</span>}
-          </Link>
         </div>
+
+        <div className="flex items-center gap-0.5 sm:gap-1">
+          {!(router.state.location.pathname.includes("/cart") || router.state.location.pathname.includes("/wishlist")) && (
+            <button onClick={() => setSearchOpen((s) => !s)} aria-label="Search" className="p-2 hover:text-gold transition-all duration-300 hover:scale-110"><Search size={18} strokeWidth={1.5} /></button>
+          )}
+          <button onClick={toggle} aria-label="Theme" className="p-2 hover:text-gold transition-all duration-300 hover:scale-110 hidden sm:block">{theme === "light" ? <Moon size={18} strokeWidth={1.5} /> : <Sun size={18} strokeWidth={1.5} />}</button>
+          <Link to="/wishlist" aria-label="Wishlist" className="p-2 hover:text-gold transition-all duration-300 hover:scale-110 relative">
+            <Heart size={18} strokeWidth={1.5} />
+            {wishCount > 0 && <span className="absolute top-1 right-1 bg-gold text-[8px] text-white w-3.5 h-3.5 rounded-full flex items-center justify-center font-bold animate-in zoom-in duration-500">{wishCount}</span>}
+          </Link>
+          <Link to="/cart" aria-label="Cart" className="p-2 hover:text-gold transition-all duration-300 hover:scale-110 relative">
+            <ShoppingBag size={18} strokeWidth={1.5} />
+            {cartCount > 0 && <span className="absolute top-1 right-1 bg-gold text-[8px] text-white w-3.5 h-3.5 rounded-full flex items-center justify-center font-bold animate-in zoom-in duration-500">{cartCount}</span>}
+          </Link>
+          <button className="lg:hidden p-2 ml-1 hover:text-gold transition-all duration-300" onClick={() => setMobileOpen(true)} aria-label="Menu">
+            <Menu size={20} strokeWidth={1.5} />
+          </button>
+        </div>
+
+        {/* Search Overlay - Positioned relative to this container */}
+        {searchOpen && (
+          <div className="absolute top-full left-1/2 -translate-x-1/2 w-[calc(100%-12px)] sm:w-[500px] mt-3 z-[60] animate-in fade-in zoom-in-95 slide-in-from-top-4 duration-500">
+            <div className="bg-background/95 backdrop-blur-2xl border border-border rounded-2xl shadow-2xl overflow-hidden">
+              <div className="px-6 py-4 flex items-center gap-4">
+                <Search size={16} className="text-muted-foreground" />
+                <input
+                  autoFocus
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                  onKeyDown={(e) => { if (e.key === "Enter" && query) { navigate({ to: "/collections/$category", params: { category: "t-shirts" } }); setSearchOpen(false); } }}
+                  placeholder="Search VELDRA..."
+                  className="flex-1 bg-transparent border-none outline-none text-sm placeholder:text-muted-foreground/50"
+                />
+                <button onClick={() => { setSearchOpen(false); setQuery(""); }} className="p-1 hover:bg-muted rounded-full transition-colors"><X size={16} /></button>
+              </div>
+              {query && (
+                <div className="border-t border-border px-6 py-6 bg-surface/30">
+                  <p className="label-caps text-[10px] text-muted-foreground mb-4">Results</p>
+                  <div className="grid grid-cols-2 gap-4">
+                    {results.length === 0 ? (
+                      <p className="text-xs text-muted-foreground italic col-span-full">No matches for "{query}"</p>
+                    ) : results.map((p) => (
+                      <Link key={p.id} to="/product/$slug" params={{ slug: p.slug }} onClick={() => setSearchOpen(false)} className="flex items-center gap-3 group">
+                        <div className="w-12 h-16 rounded-md overflow-hidden bg-muted flex-shrink-0">
+                          <img src={p.images[0]} alt={p.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                        </div>
+                        <div className="overflow-hidden">
+                          <p className="font-serif text-[11px] leading-tight truncate group-hover:text-gold transition-colors">{p.name}</p>
+                          <p className="text-[9px] text-muted-foreground mt-0.5">₹{p.price.toLocaleString("en-IN")}</p>
+                        </div>
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
       </div>
 
-      {searchOpen && (
-        <div className="border-t border-border bg-surface fade-in-up">
-          <div className="max-w-[1400px] mx-auto px-6 lg:px-10 py-5">
-            <div className="relative">
-              <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-              <input
-                autoFocus
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                onKeyDown={(e) => { if (e.key === "Enter" && query) { navigate({ to: "/collections/$category", params: { category: "t-shirts" } }); setSearchOpen(false); } }}
-                placeholder="Search for products, categories…"
-                className="w-full bg-transparent border border-border rounded-md pl-10 pr-10 py-3 outline-none focus:border-foreground"
-              />
-              <button onClick={() => { setSearchOpen(false); setQuery(""); }} className="absolute right-3 top-1/2 -translate-y-1/2"><X size={16} /></button>
-            </div>
-            {query && (
-              <div className="mt-4 grid sm:grid-cols-2 lg:grid-cols-5 gap-3">
-                {results.length === 0 ? (
-                  <p className="text-muted-foreground text-sm col-span-full">No products found for "{query}"</p>
-                ) : results.map((p) => (
-                  <Link key={p.id} to="/product/$slug" params={{ slug: p.slug }} onClick={() => setSearchOpen(false)} className="group">
-                    <div className="aspect-[3/4] overflow-hidden rounded-md bg-muted">
-                      <img src={p.images[0]} alt={p.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-                    </div>
-                    <p className="font-serif text-sm mt-2">{p.name}</p>
-                    <p className="text-xs text-muted-foreground">₹{(p.salePrice ?? p.price).toLocaleString("en-IN")}</p>
-                  </Link>
-                ))}
-              </div>
-            )}
+      {/* Mobile Menu Overlay */}
+      <div className={`fixed inset-0 z-[100] lg:hidden transition-all duration-500 ${mobileOpen ? "visible" : "invisible pointer-events-none"}`}>
+        <div 
+          className={`absolute inset-0 bg-black/20 backdrop-blur-sm transition-opacity duration-500 ${mobileOpen ? "opacity-100" : "opacity-0"}`} 
+          onClick={() => setMobileOpen(false)} 
+        />
+        
+        <div className={`absolute right-0 top-0 h-full w-[85%] max-w-sm bg-background shadow-2xl transition-transform duration-500 ease-out ${mobileOpen ? "translate-x-0" : "translate-x-full"}`}>
+          <div className="flex items-center justify-between h-16 px-8 border-b border-border/50">
+            <Link to="/" onClick={() => setMobileOpen(false)} className="font-serif text-xl sm:text-2xl tracking-tight flex items-baseline">
+              VELDRA<span className="text-gold ml-0.5">.</span>
+            </Link>
+            <button onClick={() => setMobileOpen(false)} className="p-2 -mr-2 hover:bg-muted rounded-full transition-colors"><X size={20} strokeWidth={1.5} /></button>
           </div>
-        </div>
-      )}
+          
+          <div className="flex flex-col h-[calc(100%-64px)] justify-between">
+            <nav className="flex flex-col px-8 py-10 gap-8">
+              {navLinks.map((l, i) => (
+                <Link 
+                  key={l.to} 
+                  to={l.to} 
+                  onClick={() => setMobileOpen(false)} 
+                  className={`font-serif text-4xl hover:text-gold transition-all duration-300 transform ${mobileOpen ? "translate-x-0 opacity-100" : "translate-x-10 opacity-0"}`}
+                  style={{ transitionDelay: `${i * 50}ms` }}
+                >
+                  {l.label}
+                </Link>
+              ))}
+            </nav>
 
-      {mobileOpen && (
-        <div className="fixed inset-0 z-50 bg-background lg:hidden">
-          <div className="flex items-center justify-between h-20 px-6">
-            <Link to="/" onClick={() => setMobileOpen(false)} className="font-serif text-2xl">VELDRA<span className="text-gold">.</span></Link>
-            <button onClick={() => setMobileOpen(false)}><X size={22} /></button>
+            <div className={`px-8 py-10 border-t border-border/50 bg-surface/30 transition-all duration-700 ${mobileOpen ? "translate-y-0 opacity-100" : "translate-y-10 opacity-0"}`}>
+              <div className="flex items-center gap-6 mb-8">
+                <button onClick={toggle} className="flex items-center gap-3 text-sm font-medium">
+                  {theme === "light" ? <><Moon size={18} /> Dark Mode</> : <><Sun size={18} /> Light Mode</>}
+                </button>
+              </div>
+              <p className="text-[10px] uppercase tracking-widest text-muted-foreground mb-4">Connect with us</p>
+              <div className="flex gap-5 text-muted-foreground">
+                <span className="hover:text-foreground cursor-pointer transition-colors">Instagram</span>
+                <span className="hover:text-foreground cursor-pointer transition-colors">Twitter</span>
+                <span className="hover:text-foreground cursor-pointer transition-colors">Pinterest</span>
+              </div>
+            </div>
           </div>
-          <nav className="flex flex-col px-6 gap-6 pt-8">
-            {navLinks.map((l) => (
-              <Link key={l.to} to={l.to} onClick={() => setMobileOpen(false)} className="font-serif text-3xl">{l.label}</Link>
-            ))}
-          </nav>
         </div>
-      )}
+      </div>
     </header>
   );
 }
