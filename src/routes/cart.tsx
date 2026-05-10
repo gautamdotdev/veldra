@@ -16,6 +16,7 @@ function CartPage() {
   const clear = useCart((s) => s.clear);
   const push = useToasts((s) => s.push);
   const addOrder = useOrders((s) => s.add);
+  const profile = useProfile((s) => s.profile);
   const navigate = useNavigate();
   const [coupon, setCoupon] = useState("");
   const [discount, setDiscount] = useState(0);
