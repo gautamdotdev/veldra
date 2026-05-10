@@ -57,6 +57,8 @@ function AdminOrdersPage() {
 }
 
 function AdminPanel({ onLogout }: { onLogout: () => void }) {
+  const seedDemo = useOrders((s) => s.seedDemo);
+  useEffect(() => { seedDemo(); }, [seedDemo]);
   const orders = useOrders((s) => s.orders);
   const setStatus = useOrders((s) => s.setStatus);
   const remove = useOrders((s) => s.remove);
