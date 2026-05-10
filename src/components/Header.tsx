@@ -190,3 +190,46 @@ export function Header() {
     </header>
   );
 }
+
+function MobileLink({ to, icon, children, onNavigate, delay, open }: { to: string; icon: React.ReactNode; children: React.ReactNode; onNavigate: () => void; delay: number; open: boolean }) {
+  return (
+    <Link
+      to={to}
+      onClick={onNavigate}
+      className={`group flex items-center gap-3 px-3 py-3 rounded-xl hover:bg-muted transition-all duration-300 ${open ? "translate-x-0 opacity-100" : "translate-x-6 opacity-0"}`}
+      style={{ transitionDelay: `${delay}ms` }}
+    >
+      <span className="text-muted-foreground group-hover:text-gold transition-colors">{icon}</span>
+      <span className="font-serif text-lg group-hover:text-gold transition-colors">{children}</span>
+    </Link>
+  );
+}
+
+type GroupItem = { to: "/collections" } | { to: "/collections/$category"; params: { category: string }; label: string; caption: string } | { to: "/collections"; label: string; caption: string };
+function MobileGroup({ label, icon, items, onNavigate, delay, open }: {
+  label: string; icon: React.ReactNode; delay: number; open: boolean; onNavigate: () => void;
+  items: Array<{ to: any; params?: any; label: string; caption: string }>;
+}) {
+  const [expanded, setExpanded] = useState(true);
+  return (
+    <div className={`transition-all duration-300 ${open ? "translate-x-0 opacity-100" : "translate-x-6 opacity-0"}`} style={{ transitionDelay: `${delay}ms` }}>
+      <button onClick={() => setExpanded((s) => !s)} className="w-full flex items-center gap-3 px-3 py-3 rounded-xl hover:bg-muted transition-colors">
+        <span className="text-muted-foreground">{icon}</span>
+        <span className="font-serif text-lg flex-1 text-left">{label}</span>
+        <ChevronDown size={16} className={`text-muted-foreground transition-transform ${expanded ? "rotate-180" : ""}`} />
+      </button>
+      <div className={`grid transition-all duration-300 ${expanded ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"}`}>
+        <div className="overflow-hidden">
+          <div className="pl-6 pr-2 py-2 space-y-1">
+            {items.map((it) => (
+              <Link key={it.label} to={it.to} params={it.params} onClick={onNavigate} className="group block px-3 py-2.5 rounded-lg hover:bg-muted/60 border-l-2 border-border hover:border-gold transition-all">
+                <p className="text-sm font-medium group-hover:text-gold transition-colors">{it.label}</p>
+                <p className="text-[10px] text-muted-foreground mt-0.5">{it.caption}</p>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
