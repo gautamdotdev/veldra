@@ -35,7 +35,7 @@ function CartPage() {
   const placeOrder = (viaWhatsapp: boolean) => {
     if (items.length === 0) return;
     const order = addOrder({
-      customer: { name: "Guest Customer", phone: "+91 ••••• •••••" },
+      customer: { name: profile.name, phone: profile.phone, email: profile.email, address: `${profile.address}, ${profile.city} ${profile.pincode}`.trim() },
       items: [...items],
       subtotal, shipping, discount: discAmt, total,
       mine: true,
