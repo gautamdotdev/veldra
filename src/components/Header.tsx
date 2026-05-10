@@ -1,6 +1,6 @@
 import { Link, useNavigate, useRouter } from "@tanstack/react-router";
 import { Search, Sun, Moon, ShoppingBag, Heart, Menu, X, ChevronDown, Package, Shield, User, Mail, Sparkles, Home, Layers } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { useCart, useTheme, useWishlist } from "@/lib/store";
 import { products } from "@/lib/products";
 
