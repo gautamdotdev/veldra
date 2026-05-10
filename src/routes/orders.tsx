@@ -18,6 +18,8 @@ const STATUS_STYLES: Record<OrderStatus, string> = {
 };
 
 function MyOrdersPage() {
+  const seedDemo = useOrders((s) => s.seedDemo);
+  useEffect(() => { seedDemo(); }, [seedDemo]);
   const orders = useOrders((s) => s.orders.filter((o) => o.mine));
   const remove = useOrders((s) => s.remove);
   const setStatus = useOrders((s) => s.setStatus);
