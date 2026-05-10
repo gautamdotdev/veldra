@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Package, MessageCircle, Trash2, ChevronDown } from "lucide-react";
-import { useState } from "react";
+import { Package, MessageCircle, Trash2, ChevronDown, ExternalLink } from "lucide-react";
+import { useEffect, useState } from "react";
 import { useOrders, useToasts, type OrderStatus } from "@/lib/store";
 import { whatsappCartUrl } from "@/lib/products";
 
