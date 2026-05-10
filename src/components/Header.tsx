@@ -70,6 +70,9 @@ export function Header() {
             <button onClick={() => setSearchOpen((s) => !s)} aria-label="Search" className="p-2 hover:text-gold transition-all duration-300 hover:scale-110"><Search size={18} strokeWidth={1.5} /></button>
           )}
           <button onClick={toggle} aria-label="Theme" className="p-2 hover:text-gold transition-all duration-300 hover:scale-110 hidden sm:block">{theme === "light" ? <Moon size={18} strokeWidth={1.5} /> : <Sun size={18} strokeWidth={1.5} />}</button>
+          <Link to="/profile" aria-label="Profile" className="p-2 hover:text-gold transition-all duration-300 hover:scale-110 hidden sm:block">
+            <User size={18} strokeWidth={1.5} />
+          </Link>
           <Link to="/wishlist" aria-label="Wishlist" className="p-2 hover:text-gold transition-all duration-300 hover:scale-110 relative">
             <Heart size={18} strokeWidth={1.5} />
             {wishCount > 0 && <span className="absolute top-1 right-1 bg-gold text-[8px] text-white w-3.5 h-3.5 rounded-full flex items-center justify-center font-bold animate-in zoom-in duration-500">{wishCount}</span>}
