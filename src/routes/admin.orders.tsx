@@ -1,6 +1,6 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { Lock, Trash2, Search, LogOut, Package } from "lucide-react";
-import { useMemo, useState } from "react";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { Lock, Trash2, Search, LogOut, Package, Eye } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
 import { useAdmin, useOrders, useToasts, type OrderStatus } from "@/lib/store";
 
 export const Route = createFileRoute("/admin/orders")({
