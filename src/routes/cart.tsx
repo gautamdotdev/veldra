@@ -1,7 +1,7 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
-import { Minus, Plus, Trash2, MessageCircle, ShoppingBag } from "lucide-react";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { Minus, Plus, Trash2, MessageCircle, ShoppingBag, Package } from "lucide-react";
 import { useState } from "react";
-import { useCart, useToasts } from "@/lib/store";
+import { useCart, useToasts, useOrders } from "@/lib/store";
 import { whatsappCartUrl } from "@/lib/products";
 
 export const Route = createFileRoute("/cart")({
@@ -13,7 +13,10 @@ function CartPage() {
   const items = useCart((s) => s.items);
   const setQty = useCart((s) => s.setQty);
   const remove = useCart((s) => s.remove);
+  const clear = useCart((s) => s.clear);
   const push = useToasts((s) => s.push);
+  const addOrder = useOrders((s) => s.add);
+  const navigate = useNavigate();
   const [coupon, setCoupon] = useState("");
   const [discount, setDiscount] = useState(0);
 
@@ -26,6 +29,22 @@ function CartPage() {
     if (coupon.trim().toUpperCase() === "VELDRA10") {
       setDiscount(0.1); push({ type: "success", message: "Coupon applied — 10% off" });
     } else { push({ type: "error", message: "Invalid coupon code" }); }
+  };
+
+  const placeOrder = (viaWhatsapp: boolean) => {
+    if (items.length === 0) return;
+    const order = addOrder({
+      customer: { name: "Guest Customer", phone: "+91 ••••• •••••" },
+      items: [...items],
+      subtotal, shipping, discount: discAmt, total,
+      mine: true,
+    });
+    push({ type: "success", message: `Order ${order.id} placed` });
+    clear();
+    if (viaWhatsapp) {
+      window.open(whatsappCartUrl(items, total), "_blank", "noreferrer");
+    }
+    navigate({ to: "/orders" });
   };
 
   if (items.length === 0) {
@@ -120,15 +139,20 @@ function CartPage() {
                 <span className="text-xl">₹{total.toLocaleString("en-IN")}</span>
               </div>
             </div>
-            <a
-              href={whatsappCartUrl(items, total)}
-              target="_blank" rel="noreferrer"
+            <button
+              onClick={() => placeOrder(true)}
               className="mt-8 w-full flex items-center justify-center gap-3 bg-whatsapp text-white py-4 rounded-xl text-xs label-caps font-bold hover:opacity-90 transition-all shadow-lg shadow-whatsapp/20 active:scale-[0.98]"
             >
-              <MessageCircle size={18} /> Checkout on WhatsApp
-            </a>
+              <MessageCircle size={18} /> Place Order via WhatsApp
+            </button>
+            <button
+              onClick={() => placeOrder(false)}
+              className="mt-3 w-full flex items-center justify-center gap-3 border border-border bg-background text-foreground py-3.5 rounded-xl text-xs label-caps font-bold hover:bg-muted transition-all active:scale-[0.98]"
+            >
+              <Package size={16} /> Place Order Only
+            </button>
             <p className="text-[10px] text-muted-foreground mt-5 text-center leading-relaxed opacity-60">
-              Secure your pieces. Our team will confirm availability and delivery details via WhatsApp.
+              Your order is saved to <Link to="/orders" className="underline">My Orders</Link>. Our team confirms via WhatsApp.
             </p>
           </aside>
         </div>

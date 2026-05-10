@@ -88,6 +88,67 @@ export const useTheme = create<ThemeState>()(
   ),
 );
 
+export type OrderStatus = "Pending" | "Confirmed" | "Shipped" | "Delivered" | "Cancelled";
+export type Order = {
+  id: string;
+  createdAt: number;
+  customer: { name: string; phone: string; email?: string; address?: string };
+  items: CartItem[];
+  subtotal: number;
+  shipping: number;
+  discount: number;
+  total: number;
+  status: OrderStatus;
+  notes?: string;
+  mine?: boolean;
+};
+
+type OrdersState = {
+  orders: Order[];
+  add: (o: Omit<Order, "id" | "createdAt" | "status"> & { status?: OrderStatus }) => Order;
+  setStatus: (id: string, status: OrderStatus) => void;
+  remove: (id: string) => void;
+  update: (id: string, patch: Partial<Order>) => void;
+};
+
+export const useOrders = create<OrdersState>()(
+  persist(
+    (set, get) => ({
+      orders: [],
+      add: (o) => {
+        const order: Order = {
+          ...o,
+          id: "VLD-" + Math.random().toString(36).slice(2, 8).toUpperCase(),
+          createdAt: Date.now(),
+          status: o.status ?? "Pending",
+        };
+        set({ orders: [order, ...get().orders] });
+        return order;
+      },
+      setStatus: (id, status) => set({ orders: get().orders.map((o) => (o.id === id ? { ...o, status } : o)) }),
+      remove: (id) => set({ orders: get().orders.filter((o) => o.id !== id) }),
+      update: (id, patch) => set({ orders: get().orders.map((o) => (o.id === id ? { ...o, ...patch } : o)) }),
+    }),
+    { name: "veldra-orders" },
+  ),
+);
+
+type AdminState = { isAdmin: boolean; login: (pw: string) => boolean; logout: () => void };
+export const useAdmin = create<AdminState>()(
+  persist(
+    (set) => ({
+      isAdmin: false,
+      login: (pw) => {
+        const ok = pw === "veldra-admin";
+        if (ok) set({ isAdmin: true });
+        return ok;
+      },
+      logout: () => set({ isAdmin: false }),
+    }),
+    { name: "veldra-admin" },
+  ),
+);
+
 type ToastItem = { id: number; type: "success" | "error" | "info"; message: string };
 type ToastState = { toasts: ToastItem[]; push: (t: Omit<ToastItem, "id">) => void; dismiss: (id: number) => void };
 export const useToasts = create<ToastState>((set, get) => ({

@@ -1,6 +1,6 @@
 import { Link, useNavigate, useRouter } from "@tanstack/react-router";
-import { Search, Sun, Moon, ShoppingBag, Heart, Menu, X } from "lucide-react";
-import { useEffect, useState } from "react";
+import { Search, Sun, Moon, ShoppingBag, Heart, Menu, X, ChevronDown, Package, Shield, User, Mail, Sparkles, Home, Layers } from "lucide-react";
+import { useEffect, useState, type ReactNode } from "react";
 import { useCart, useTheme, useWishlist } from "@/lib/store";
 import { products } from "@/lib/products";
 
@@ -139,29 +139,46 @@ export function Header() {
             <button onClick={() => setMobileOpen(false)} className="p-2 -mr-2 hover:bg-muted rounded-full transition-colors"><X size={20} strokeWidth={1.5} /></button>
           </div>
           
-          <div className="flex flex-col h-[calc(100%-64px)] justify-between">
-            <nav className="flex flex-col px-8 py-10 gap-8">
-              {navLinks.map((l, i) => (
-                <Link 
-                  key={l.to} 
-                  to={l.to} 
-                  onClick={() => setMobileOpen(false)} 
-                  className={`font-serif text-4xl hover:text-gold transition-all duration-300 transform ${mobileOpen ? "translate-x-0 opacity-100" : "translate-x-10 opacity-0"}`}
-                  style={{ transitionDelay: `${i * 50}ms` }}
-                >
-                  {l.label}
-                </Link>
-              ))}
+          <div className="flex flex-col h-[calc(100%-64px)] overflow-y-auto">
+            <nav className="flex flex-col px-7 py-8 gap-1">
+              <MobileLink to="/" icon={<Home size={16} />} onNavigate={() => setMobileOpen(false)} delay={0} open={mobileOpen}>Home</MobileLink>
+
+              {/* Shop dropdown */}
+              <MobileGroup
+                label="Shop"
+                icon={<Layers size={16} />}
+                delay={50}
+                open={mobileOpen}
+                items={[
+                  { to: "/collections" as const, label: "All Collections", caption: "Browse the full catalogue" },
+                  { to: "/collections/$category" as const, params: { category: "t-shirts" }, label: "T-Shirts", caption: "Supima & modal essentials" },
+                  { to: "/collections/$category" as const, params: { category: "shirts" }, label: "Shirts", caption: "Linen, oxford & poplin" },
+                  { to: "/collections/$category" as const, params: { category: "jeans" }, label: "Jeans", caption: "Selvedge & stretch denim" },
+                  { to: "/collections/$category" as const, params: { category: "trousers" }, label: "Trousers", caption: "Pleated wool & chinos" },
+                ]}
+                onNavigate={() => setMobileOpen(false)}
+              />
+
+              <MobileLink to="/new-arrivals" icon={<Sparkles size={16} />} onNavigate={() => setMobileOpen(false)} delay={100} open={mobileOpen}>New Arrivals</MobileLink>
+              <MobileLink to="/about" icon={<User size={16} />} onNavigate={() => setMobileOpen(false)} delay={150} open={mobileOpen}>About</MobileLink>
+              <MobileLink to="/contact" icon={<Mail size={16} />} onNavigate={() => setMobileOpen(false)} delay={200} open={mobileOpen}>Contact</MobileLink>
+
+              <div className="h-px bg-border/60 my-5" />
+              <p className="px-3 mb-2 text-[10px] label-caps text-muted-foreground tracking-widest">Account</p>
+              <MobileLink to="/orders" icon={<Package size={16} />} onNavigate={() => setMobileOpen(false)} delay={250} open={mobileOpen}>My Orders</MobileLink>
+              <MobileLink to="/wishlist" icon={<Heart size={16} />} onNavigate={() => setMobileOpen(false)} delay={300} open={mobileOpen}>Wishlist</MobileLink>
+              <MobileLink to="/cart" icon={<ShoppingBag size={16} />} onNavigate={() => setMobileOpen(false)} delay={350} open={mobileOpen}>Cart</MobileLink>
+              <MobileLink to="/admin/orders" icon={<Shield size={16} />} onNavigate={() => setMobileOpen(false)} delay={400} open={mobileOpen}>Admin · Orders</MobileLink>
             </nav>
 
-            <div className={`px-8 py-10 border-t border-border/50 bg-surface/30 transition-all duration-700 ${mobileOpen ? "translate-y-0 opacity-100" : "translate-y-10 opacity-0"}`}>
-              <div className="flex items-center gap-6 mb-8">
+            <div className={`mt-auto px-8 py-8 border-t border-border/50 bg-surface/30 transition-all duration-700 ${mobileOpen ? "translate-y-0 opacity-100" : "translate-y-10 opacity-0"}`}>
+              <div className="flex items-center gap-6 mb-6">
                 <button onClick={toggle} className="flex items-center gap-3 text-sm font-medium">
                   {theme === "light" ? <><Moon size={18} /> Dark Mode</> : <><Sun size={18} /> Light Mode</>}
                 </button>
               </div>
               <p className="text-[10px] uppercase tracking-widest text-muted-foreground mb-4">Connect with us</p>
-              <div className="flex gap-5 text-muted-foreground">
+              <div className="flex gap-5 text-muted-foreground text-sm">
                 <span className="hover:text-foreground cursor-pointer transition-colors">Instagram</span>
                 <span className="hover:text-foreground cursor-pointer transition-colors">Twitter</span>
                 <span className="hover:text-foreground cursor-pointer transition-colors">Pinterest</span>
@@ -171,5 +188,48 @@ export function Header() {
         </div>
       </div>
     </header>
+  );
+}
+
+function MobileLink({ to, icon, children, onNavigate, delay, open }: { to: string; icon: React.ReactNode; children: React.ReactNode; onNavigate: () => void; delay: number; open: boolean }) {
+  return (
+    <Link
+      to={to}
+      onClick={onNavigate}
+      className={`group flex items-center gap-3 px-3 py-3 rounded-xl hover:bg-muted transition-all duration-300 ${open ? "translate-x-0 opacity-100" : "translate-x-6 opacity-0"}`}
+      style={{ transitionDelay: `${delay}ms` }}
+    >
+      <span className="text-muted-foreground group-hover:text-gold transition-colors">{icon}</span>
+      <span className="font-serif text-lg group-hover:text-gold transition-colors">{children}</span>
+    </Link>
+  );
+}
+
+type GroupItem = { to: "/collections" } | { to: "/collections/$category"; params: { category: string }; label: string; caption: string } | { to: "/collections"; label: string; caption: string };
+function MobileGroup({ label, icon, items, onNavigate, delay, open }: {
+  label: string; icon: React.ReactNode; delay: number; open: boolean; onNavigate: () => void;
+  items: Array<{ to: any; params?: any; label: string; caption: string }>;
+}) {
+  const [expanded, setExpanded] = useState(true);
+  return (
+    <div className={`transition-all duration-300 ${open ? "translate-x-0 opacity-100" : "translate-x-6 opacity-0"}`} style={{ transitionDelay: `${delay}ms` }}>
+      <button onClick={() => setExpanded((s) => !s)} className="w-full flex items-center gap-3 px-3 py-3 rounded-xl hover:bg-muted transition-colors">
+        <span className="text-muted-foreground">{icon}</span>
+        <span className="font-serif text-lg flex-1 text-left">{label}</span>
+        <ChevronDown size={16} className={`text-muted-foreground transition-transform ${expanded ? "rotate-180" : ""}`} />
+      </button>
+      <div className={`grid transition-all duration-300 ${expanded ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"}`}>
+        <div className="overflow-hidden">
+          <div className="pl-6 pr-2 py-2 space-y-1">
+            {items.map((it) => (
+              <Link key={it.label} to={it.to} params={it.params} onClick={onNavigate} className="group block px-3 py-2.5 rounded-lg hover:bg-muted/60 border-l-2 border-border hover:border-gold transition-all">
+                <p className="text-sm font-medium group-hover:text-gold transition-colors">{it.label}</p>
+                <p className="text-[10px] text-muted-foreground mt-0.5">{it.caption}</p>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }
