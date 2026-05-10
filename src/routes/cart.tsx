@@ -13,7 +13,10 @@ function CartPage() {
   const items = useCart((s) => s.items);
   const setQty = useCart((s) => s.setQty);
   const remove = useCart((s) => s.remove);
+  const clear = useCart((s) => s.clear);
   const push = useToasts((s) => s.push);
+  const addOrder = useOrders((s) => s.add);
+  const navigate = useNavigate();
   const [coupon, setCoupon] = useState("");
   const [discount, setDiscount] = useState(0);
 
@@ -26,6 +29,22 @@ function CartPage() {
     if (coupon.trim().toUpperCase() === "VELDRA10") {
       setDiscount(0.1); push({ type: "success", message: "Coupon applied — 10% off" });
     } else { push({ type: "error", message: "Invalid coupon code" }); }
+  };
+
+  const placeOrder = (viaWhatsapp: boolean) => {
+    if (items.length === 0) return;
+    const order = addOrder({
+      customer: { name: "Guest Customer", phone: "+91 ••••• •••••" },
+      items: [...items],
+      subtotal, shipping, discount: discAmt, total,
+      mine: true,
+    });
+    push({ type: "success", message: `Order ${order.id} placed` });
+    clear();
+    if (viaWhatsapp) {
+      window.open(whatsappCartUrl(items, total), "_blank", "noreferrer");
+    }
+    navigate({ to: "/orders" });
   };
 
   if (items.length === 0) {
