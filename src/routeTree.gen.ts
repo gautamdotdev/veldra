@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as WishlistRouteImport } from './routes/wishlist'
+import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as OrdersRouteImport } from './routes/orders'
 import { Route as NewArrivalsRouteImport } from './routes/new-arrivals'
 import { Route as ContactRouteImport } from './routes/contact'
@@ -25,6 +26,11 @@ import { Route as AdminOrdersRouteImport } from './routes/admin.orders'
 const WishlistRoute = WishlistRouteImport.update({
   id: '/wishlist',
   path: '/wishlist',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProfileRoute = ProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
   getParentRoute: () => rootRouteImport,
 } as any)
 const OrdersRoute = OrdersRouteImport.update({
@@ -90,6 +96,7 @@ export interface FileRoutesByFullPath {
   '/contact': typeof ContactRoute
   '/new-arrivals': typeof NewArrivalsRoute
   '/orders': typeof OrdersRoute
+  '/profile': typeof ProfileRoute
   '/wishlist': typeof WishlistRoute
   '/admin/orders': typeof AdminOrdersRoute
   '/collections/$category': typeof CollectionsCategoryRoute
@@ -104,6 +111,7 @@ export interface FileRoutesByTo {
   '/contact': typeof ContactRoute
   '/new-arrivals': typeof NewArrivalsRoute
   '/orders': typeof OrdersRoute
+  '/profile': typeof ProfileRoute
   '/wishlist': typeof WishlistRoute
   '/admin/orders': typeof AdminOrdersRoute
   '/collections/$category': typeof CollectionsCategoryRoute
@@ -119,6 +127,7 @@ export interface FileRoutesById {
   '/contact': typeof ContactRoute
   '/new-arrivals': typeof NewArrivalsRoute
   '/orders': typeof OrdersRoute
+  '/profile': typeof ProfileRoute
   '/wishlist': typeof WishlistRoute
   '/admin/orders': typeof AdminOrdersRoute
   '/collections/$category': typeof CollectionsCategoryRoute
@@ -135,6 +144,7 @@ export interface FileRouteTypes {
     | '/contact'
     | '/new-arrivals'
     | '/orders'
+    | '/profile'
     | '/wishlist'
     | '/admin/orders'
     | '/collections/$category'
@@ -149,6 +159,7 @@ export interface FileRouteTypes {
     | '/contact'
     | '/new-arrivals'
     | '/orders'
+    | '/profile'
     | '/wishlist'
     | '/admin/orders'
     | '/collections/$category'
@@ -163,6 +174,7 @@ export interface FileRouteTypes {
     | '/contact'
     | '/new-arrivals'
     | '/orders'
+    | '/profile'
     | '/wishlist'
     | '/admin/orders'
     | '/collections/$category'
@@ -178,6 +190,7 @@ export interface RootRouteChildren {
   ContactRoute: typeof ContactRoute
   NewArrivalsRoute: typeof NewArrivalsRoute
   OrdersRoute: typeof OrdersRoute
+  ProfileRoute: typeof ProfileRoute
   WishlistRoute: typeof WishlistRoute
   AdminOrdersRoute: typeof AdminOrdersRoute
   CollectionsCategoryRoute: typeof CollectionsCategoryRoute
@@ -193,6 +206,13 @@ declare module '@tanstack/react-router' {
       path: '/wishlist'
       fullPath: '/wishlist'
       preLoaderRoute: typeof WishlistRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/profile': {
+      id: '/profile'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof ProfileRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/orders': {
@@ -282,6 +302,7 @@ const rootRouteChildren: RootRouteChildren = {
   ContactRoute: ContactRoute,
   NewArrivalsRoute: NewArrivalsRoute,
   OrdersRoute: OrdersRoute,
+  ProfileRoute: ProfileRoute,
   WishlistRoute: WishlistRoute,
   AdminOrdersRoute: AdminOrdersRoute,
   CollectionsCategoryRoute: CollectionsCategoryRoute,
