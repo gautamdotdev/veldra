@@ -1,6 +1,6 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { Lock, Trash2, Search, LogOut, Package } from "lucide-react";
-import { useMemo, useState } from "react";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { Lock, Trash2, Search, LogOut, Package, Eye } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
 import { useAdmin, useOrders, useToasts, type OrderStatus } from "@/lib/store";
 
 export const Route = createFileRoute("/admin/orders")({
@@ -57,6 +57,8 @@ function AdminOrdersPage() {
 }
 
 function AdminPanel({ onLogout }: { onLogout: () => void }) {
+  const seedDemo = useOrders((s) => s.seedDemo);
+  useEffect(() => { seedDemo(); }, [seedDemo]);
   const orders = useOrders((s) => s.orders);
   const setStatus = useOrders((s) => s.setStatus);
   const remove = useOrders((s) => s.remove);
@@ -167,9 +169,14 @@ function AdminPanel({ onLogout }: { onLogout: () => void }) {
                       </select>
                     </td>
                     <td className="px-5 py-4 text-right">
-                      <button onClick={() => { if (confirm(`Delete order ${o.id}?`)) { remove(o.id); push({ type: "success", message: "Order deleted" }); } }} className="p-2 text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded-lg transition">
-                        <Trash2 size={16} />
-                      </button>
+                      <div className="inline-flex items-center gap-1">
+                        <Link to="/order/$id" params={{ id: o.id }} className="p-2 text-muted-foreground hover:text-gold hover:bg-muted rounded-lg transition" title="View details">
+                          <Eye size={16} />
+                        </Link>
+                        <button onClick={() => { if (confirm(`Delete order ${o.id}?`)) { remove(o.id); push({ type: "success", message: "Order deleted" }); } }} className="p-2 text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded-lg transition">
+                          <Trash2 size={16} />
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))}

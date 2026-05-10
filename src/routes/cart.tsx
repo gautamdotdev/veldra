@@ -1,7 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { Minus, Plus, Trash2, MessageCircle, ShoppingBag, Package } from "lucide-react";
 import { useState } from "react";
-import { useCart, useToasts, useOrders } from "@/lib/store";
+import { useCart, useToasts, useOrders, useProfile } from "@/lib/store";
 import { whatsappCartUrl } from "@/lib/products";
 
 export const Route = createFileRoute("/cart")({
@@ -16,6 +16,7 @@ function CartPage() {
   const clear = useCart((s) => s.clear);
   const push = useToasts((s) => s.push);
   const addOrder = useOrders((s) => s.add);
+  const profile = useProfile((s) => s.profile);
   const navigate = useNavigate();
   const [coupon, setCoupon] = useState("");
   const [discount, setDiscount] = useState(0);
@@ -34,7 +35,7 @@ function CartPage() {
   const placeOrder = (viaWhatsapp: boolean) => {
     if (items.length === 0) return;
     const order = addOrder({
-      customer: { name: "Guest Customer", phone: "+91 ••••• •••••" },
+      customer: { name: profile.name, phone: profile.phone, email: profile.email, address: `${profile.address}, ${profile.city} ${profile.pincode}`.trim() },
       items: [...items],
       subtotal, shipping, discount: discAmt, total,
       mine: true,

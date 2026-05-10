@@ -70,6 +70,9 @@ export function Header() {
             <button onClick={() => setSearchOpen((s) => !s)} aria-label="Search" className="p-2 hover:text-gold transition-all duration-300 hover:scale-110"><Search size={18} strokeWidth={1.5} /></button>
           )}
           <button onClick={toggle} aria-label="Theme" className="p-2 hover:text-gold transition-all duration-300 hover:scale-110 hidden sm:block">{theme === "light" ? <Moon size={18} strokeWidth={1.5} /> : <Sun size={18} strokeWidth={1.5} />}</button>
+          <Link to="/profile" aria-label="Profile" className="p-2 hover:text-gold transition-all duration-300 hover:scale-110 hidden sm:block">
+            <User size={18} strokeWidth={1.5} />
+          </Link>
           <Link to="/wishlist" aria-label="Wishlist" className="p-2 hover:text-gold transition-all duration-300 hover:scale-110 relative">
             <Heart size={18} strokeWidth={1.5} />
             {wishCount > 0 && <span className="absolute top-1 right-1 bg-gold text-[8px] text-white w-3.5 h-3.5 rounded-full flex items-center justify-center font-bold animate-in zoom-in duration-500">{wishCount}</span>}
@@ -165,10 +168,11 @@ export function Header() {
 
               <div className="h-px bg-border/60 my-5" />
               <p className="px-3 mb-2 text-[10px] label-caps text-muted-foreground tracking-widest">Account</p>
-              <MobileLink to="/orders" icon={<Package size={16} />} onNavigate={() => setMobileOpen(false)} delay={250} open={mobileOpen}>My Orders</MobileLink>
+              <MobileLink to="/profile" icon={<User size={16} />} onNavigate={() => setMobileOpen(false)} delay={230} open={mobileOpen}>My Profile</MobileLink>
+              <MobileLink to="/orders" icon={<Package size={16} />} onNavigate={() => setMobileOpen(false)} delay={260} open={mobileOpen}>My Orders</MobileLink>
               <MobileLink to="/wishlist" icon={<Heart size={16} />} onNavigate={() => setMobileOpen(false)} delay={300} open={mobileOpen}>Wishlist</MobileLink>
-              <MobileLink to="/cart" icon={<ShoppingBag size={16} />} onNavigate={() => setMobileOpen(false)} delay={350} open={mobileOpen}>Cart</MobileLink>
-              <MobileLink to="/admin/orders" icon={<Shield size={16} />} onNavigate={() => setMobileOpen(false)} delay={400} open={mobileOpen}>Admin · Orders</MobileLink>
+              <MobileLink to="/cart" icon={<ShoppingBag size={16} />} onNavigate={() => setMobileOpen(false)} delay={340} open={mobileOpen}>Cart</MobileLink>
+              <MobileLink to="/admin/orders" icon={<Shield size={16} />} onNavigate={() => setMobileOpen(false)} delay={380} open={mobileOpen}>Admin · Orders</MobileLink>
             </nav>
 
             <div className={`mt-auto px-8 py-8 border-t border-border/50 bg-surface/30 transition-all duration-700 ${mobileOpen ? "translate-y-0 opacity-100" : "translate-y-10 opacity-0"}`}>

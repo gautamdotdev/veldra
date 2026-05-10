@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Package, MessageCircle, Trash2, ChevronDown } from "lucide-react";
-import { useState } from "react";
+import { Package, MessageCircle, Trash2, ChevronDown, ExternalLink } from "lucide-react";
+import { useEffect, useState } from "react";
 import { useOrders, useToasts, type OrderStatus } from "@/lib/store";
 import { whatsappCartUrl } from "@/lib/products";
 
@@ -18,6 +18,8 @@ const STATUS_STYLES: Record<OrderStatus, string> = {
 };
 
 function MyOrdersPage() {
+  const seedDemo = useOrders((s) => s.seedDemo);
+  useEffect(() => { seedDemo(); }, [seedDemo]);
   const orders = useOrders((s) => s.orders.filter((o) => o.mine));
   const remove = useOrders((s) => s.remove);
   const setStatus = useOrders((s) => s.setStatus);
@@ -91,6 +93,9 @@ function MyOrdersPage() {
                   </div>
 
                   <div className="mt-6 flex flex-wrap gap-2">
+                    <Link to="/order/$id" params={{ id: o.id }} className="inline-flex items-center gap-2 bg-foreground text-background px-4 py-2.5 rounded-lg text-[11px] label-caps font-bold hover:bg-gold transition">
+                      <ExternalLink size={14} /> View Details
+                    </Link>
                     <a href={whatsappCartUrl(o.items, o.total)} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 bg-whatsapp text-white px-4 py-2.5 rounded-lg text-[11px] label-caps font-bold hover:opacity-90 transition">
                       <MessageCircle size={14} /> Contact on WhatsApp
                     </a>
