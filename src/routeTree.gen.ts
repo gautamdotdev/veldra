@@ -18,6 +18,7 @@ import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as CollectionsIndexRouteImport } from './routes/collections.index'
 import { Route as ProductSlugRouteImport } from './routes/product.$slug'
+import { Route as OrderIdRouteImport } from './routes/order.$id'
 import { Route as CollectionsCategoryRouteImport } from './routes/collections.$category'
 import { Route as AdminOrdersRouteImport } from './routes/admin.orders'
 
@@ -66,6 +67,11 @@ const ProductSlugRoute = ProductSlugRouteImport.update({
   path: '/product/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const OrderIdRoute = OrderIdRouteImport.update({
+  id: '/order/$id',
+  path: '/order/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const CollectionsCategoryRoute = CollectionsCategoryRouteImport.update({
   id: '/collections/$category',
   path: '/collections/$category',
@@ -87,6 +93,7 @@ export interface FileRoutesByFullPath {
   '/wishlist': typeof WishlistRoute
   '/admin/orders': typeof AdminOrdersRoute
   '/collections/$category': typeof CollectionsCategoryRoute
+  '/order/$id': typeof OrderIdRoute
   '/product/$slug': typeof ProductSlugRoute
   '/collections/': typeof CollectionsIndexRoute
 }
@@ -100,6 +107,7 @@ export interface FileRoutesByTo {
   '/wishlist': typeof WishlistRoute
   '/admin/orders': typeof AdminOrdersRoute
   '/collections/$category': typeof CollectionsCategoryRoute
+  '/order/$id': typeof OrderIdRoute
   '/product/$slug': typeof ProductSlugRoute
   '/collections': typeof CollectionsIndexRoute
 }
@@ -114,6 +122,7 @@ export interface FileRoutesById {
   '/wishlist': typeof WishlistRoute
   '/admin/orders': typeof AdminOrdersRoute
   '/collections/$category': typeof CollectionsCategoryRoute
+  '/order/$id': typeof OrderIdRoute
   '/product/$slug': typeof ProductSlugRoute
   '/collections/': typeof CollectionsIndexRoute
 }
@@ -129,6 +138,7 @@ export interface FileRouteTypes {
     | '/wishlist'
     | '/admin/orders'
     | '/collections/$category'
+    | '/order/$id'
     | '/product/$slug'
     | '/collections/'
   fileRoutesByTo: FileRoutesByTo
@@ -142,6 +152,7 @@ export interface FileRouteTypes {
     | '/wishlist'
     | '/admin/orders'
     | '/collections/$category'
+    | '/order/$id'
     | '/product/$slug'
     | '/collections'
   id:
@@ -155,6 +166,7 @@ export interface FileRouteTypes {
     | '/wishlist'
     | '/admin/orders'
     | '/collections/$category'
+    | '/order/$id'
     | '/product/$slug'
     | '/collections/'
   fileRoutesById: FileRoutesById
@@ -169,6 +181,7 @@ export interface RootRouteChildren {
   WishlistRoute: typeof WishlistRoute
   AdminOrdersRoute: typeof AdminOrdersRoute
   CollectionsCategoryRoute: typeof CollectionsCategoryRoute
+  OrderIdRoute: typeof OrderIdRoute
   ProductSlugRoute: typeof ProductSlugRoute
   CollectionsIndexRoute: typeof CollectionsIndexRoute
 }
@@ -238,6 +251,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProductSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/order/$id': {
+      id: '/order/$id'
+      path: '/order/$id'
+      fullPath: '/order/$id'
+      preLoaderRoute: typeof OrderIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/collections/$category': {
       id: '/collections/$category'
       path: '/collections/$category'
@@ -265,9 +285,20 @@ const rootRouteChildren: RootRouteChildren = {
   WishlistRoute: WishlistRoute,
   AdminOrdersRoute: AdminOrdersRoute,
   CollectionsCategoryRoute: CollectionsCategoryRoute,
+  OrderIdRoute: OrderIdRoute,
   ProductSlugRoute: ProductSlugRoute,
   CollectionsIndexRoute: CollectionsIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
